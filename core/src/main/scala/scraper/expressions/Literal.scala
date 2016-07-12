@@ -5,7 +5,7 @@ import scala.util.Try
 import scraper.Row
 import scraper.types._
 
-case class Literal(value: Any, override val dataType: PrimitiveType) extends LeafExpression {
+case class Literal(value: Any, override val dataType: DataType) extends LeafExpression {
   override def isNullable: Boolean = value == null
 
   override def evaluate(input: Row): Any = value
@@ -21,6 +21,7 @@ case class Literal(value: Any, override val dataType: PrimitiveType) extends Lea
     case (v: Float, FloatType)     => s"CAST($v AS ${FloatType.sql})"
     case (v: Double, DoubleType)   => s"CAST($v AS ${DoubleType.sql})"
     case (v, _) if v == null       => "NULL"
+    case (v, _: ComplexType)       => throw new UnsupportedOperationException
     case (v, _)                    => v.toString
   })
 }

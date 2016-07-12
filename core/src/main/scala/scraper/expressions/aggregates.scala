@@ -171,7 +171,7 @@ abstract class ReduceLeft(updateFunction: (Expression, Expression) => Expression
 
   override def aggBufferAttributes: Seq[AttributeRef] = Seq(value)
 
-  override def zeroValues: Seq[Expression] = Seq(lit(null) cast dataType)
+  override def zeroValues: Seq[Expression] = Seq(Literal(null, dataType))
 
   override def updateExpressions: Seq[Expression] = Seq(
     coalesce(updateFunction(value, child), value, child)
@@ -209,7 +209,7 @@ case class Average(child: Expression) extends UnaryExpression with DeclarativeAg
 
   override def aggBufferAttributes: Seq[AttributeRef] = Seq(sum, count)
 
-  override def zeroValues: Seq[Expression] = Seq(lit(null) cast child.dataType, 0L)
+  override def zeroValues: Seq[Expression] = Seq(Literal(null, child.dataType), 0L)
 
   override def updateExpressions: Seq[Expression] = Seq(
     coalesce((child cast dataType) + sum, child cast dataType, sum),
